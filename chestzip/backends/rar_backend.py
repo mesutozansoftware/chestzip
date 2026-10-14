@@ -14,6 +14,7 @@ import atexit
 import importlib.util
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -75,15 +76,51 @@ def _listfile(name: str) -> str:
     return path
 
 
+_name_maps: dict[tuple[str, Optional[str]], dict[str, str]] = {}
+
+
+def _sevenzip_names(rarfn: str, pwd: Optional[str]) -> dict[str, str]:
+    """rarfile adı -> 7-Zip'in aynı kayıt için kullandığı ad.
+
+    Unicode bayrağı olmayan eski RAR3 adlarını 7-Zip Windows'ta yerel kod
+    sayfasıyla, diğer sistemlerde UTF-8 ile çözer; adlar bu yüzden farklı
+    olabilir. İki liste de arşiv sırasında olduğundan sıra numarasıyla eşlenir."""
+    key = (os.path.abspath(rarfn), pwd)
+    if key in _name_maps:
+        return _name_maps[key]
+    mapping: dict[str, str] = {}
+    try:
+        cmd = [rarfile.SEVENZIP2_TOOL, "l", "-slt", "-sccUTF-8", "-bb0",
+               f"-p{pwd}" if pwd else "-p", "--", rarfn]
+        out = subprocess.run(cmd, capture_output=True, timeout=120,
+                             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        text = out.stdout.decode("utf-8", "replace").replace("\r\n", "\n")
+        body = text.split("\n----------\n", 1)[1] if "\n----------\n" in text else ""
+        seven = [line[7:] for line in body.split("\n") if line.startswith("Path = ")]
+        rf = rarfile.RarFile(rarfn)
+        if pwd:
+            rf.setpassword(pwd)
+        ours = [i.filename.replace("/", os.sep) for i in rf.infolist()]
+        rf.close()
+        if len(seven) == len(ours):
+            mapping = dict(zip(ours, seven))
+    except (OSError, subprocess.SubprocessError, rarfile.Error):
+        pass
+    _name_maps[key] = mapping
+    return mapping
+
+
 if rarfile is not None:
     class _SevenZipSetup(rarfile.ToolSetup):
-        """Gömülü 7zz için komut satırı: dosya adı liste dosyasıyla verilir."""
+        """Gömülü 7zz için komut satırı: dosya adı, 7-Zip'in kendi gördüğü
+        biçimde ve UTF-8 liste dosyasıyla verilir (Windows Unicode sorunları)."""
 
         def open_cmdline(self, pwd, rarfn, filefn=None):
             cmd = [rarfile.SEVENZIP2_TOOL, "e", "-so", "-bb0", "-scsUTF-8", "-spd"]
             self.add_password_arg(cmd, pwd)
             if filefn:
-                cmd.append("-i@" + _listfile(filefn))
+                name = _sevenzip_names(rarfn, pwd).get(filefn, filefn)
+                cmd.append("-i@" + _listfile(name))
             cmd += ["--", rarfn]
             return cmd
 
