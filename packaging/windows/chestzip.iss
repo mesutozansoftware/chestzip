@@ -4,7 +4,9 @@
 ; "Birlikte aç" menüsüne ekler.
 
 #define AppName "ChestZip"
-#define AppVersion "1.0.0"
+#ifndef AppVersion
+  #define AppVersion "1.0.0"
+#endif
 
 [Setup]
 AppId={{6E0B7C1A-3F0D-4C4B-9C2E-5A1C2E7F9B10}
