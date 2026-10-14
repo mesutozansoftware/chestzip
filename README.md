@@ -103,8 +103,15 @@ Ya da paketi elle indirin:
 
 **İlk açılış uyarısı:** Uygulama henüz ücretli bir kod imzalama sertifikasıyla
 imzalanmadığı için Windows "bilgisayarınızı korudu" uyarısı gösterebilir
-(*Ek bilgi → Yine de çalıştır*). macOS'ta ise *Sistem Ayarları → Gizlilik ve
-Güvenlik → Yine de Aç* gerekebilir.
+(*Ek bilgi → Yine de çalıştır*).
+
+**macOS'ta açılmıyorsa:** En sorunsuz yol yukarıdaki `curl` komutudur; uyarı
+çıkmaz. Tarayıcıdan indirilen `.zip` ile kurduysanız ve uygulama simgesi
+zıplayıp açılmıyorsa, macOS'un "internetten indirildi" işaretini kaldırın:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/ChestZip.app
+```
 
 ### Kaynaktan çalıştırma (geliştiriciler için, Python 3.10+)
 

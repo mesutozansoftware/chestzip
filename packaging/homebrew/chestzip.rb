@@ -13,5 +13,13 @@ cask "chestzip" do
   app "ChestZip.app"
   binary "#{appdir}/ChestZip.app/Contents/MacOS/chestzip"
 
+  # Uygulama henüz Apple tarafından imzalanmadı (notarize edilmedi). Karantina
+  # işareti paketin içindeki yüzlerce kütüphaneye de konduğu için macOS
+  # uygulamayı başlatırken takılıyor; işaret yalnızca ChestZip.app'ten kaldırılır.
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", "#{appdir}/ChestZip.app"]
+  end
+
   zap trash: "~/Library/Application Support/ChestZip"
 end
