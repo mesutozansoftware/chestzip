@@ -95,7 +95,7 @@ Ya da paketi elle indirin:
 | Sistem | Nasıl kurulur |
 |---|---|
 | **Windows** | `ChestZip-…-setup-windows-x64.exe` kurulum programını çalıştırın (`.chz` dosyaları ilişkilendirilir). Kurulumsuz kullanım için `…-windows-x64.zip`. |
-| **macOS (Homebrew)** | `brew install --cask mesutozansoftware/chestzip/chestzip` |
+| **macOS (Homebrew)** | `brew install --cask mesutozansoftware/chestzip/chestzip` — kısa adla kurmak için bir kez `brew tap mesutozansoftware/chestzip && brew trust mesutozansoftware/chestzip`, sonra `brew install chestzip` |
 | **macOS (elle)** | `ChestZip-…-macos-arm64.zip` dosyasını açıp `ChestZip.app`'i Uygulamalar'a sürükleyin. (Apple Silicon) |
 | **Ubuntu / Debian** | `sudo apt install ./chestzip_…_amd64.deb` |
 | **Linux (Flatpak)** | `flatpak install --user ChestZip-…-linux-x64.flatpak` |
