@@ -1,0 +1,20 @@
+name: debug-rar
+on: workflow_dispatch
+jobs:
+  win:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install py7zz rarfile
+      - shell: pwsh
+        run: |
+          $z = python -c "import importlib.util,pathlib;print(pathlib.Path(importlib.util.find_spec('py7zz').origin).parent/'bin'/'7zz.exe')"
+          & $z l -slt -sccUTF-8 tests\data\rar\unicode.rar
+          Write-Host "=== e -so (tum arsiv)"
+          & $z e -so -bb3 -p -- tests\data\rar\unicode.rar | Format-Hex
+          Write-Host "exit $LASTEXITCODE"
+          Write-Host "=== rar3-subdirs e -so"
+          & $z e -so -bb3 -p -- tests\data\rar\rar3-subdirs.rar | Measure-Object -Character
+      - run: python -c "import rarfile;rf=rarfile.RarFile('tests/data/rar/unicode.rar');[print(repr(i.filename),i.compress_type,i.flags,i.file_size,i.compress_size,i.host_os) for i in rf.infolist()]"
