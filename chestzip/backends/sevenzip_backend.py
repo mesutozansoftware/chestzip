@@ -161,7 +161,7 @@ class SevenZipBackend(Backend):
         if targets:
             # py7zr yolları kendi kökü altına yerleştirir; sanal bir kök kullanıp
             # gerçek hedefi ExtractContext belirler.
-            root = Path(os.path.realpath(tempfile.mkdtemp(prefix="sandik-7z-")))
+            root = Path(os.path.realpath(tempfile.mkdtemp(prefix="chestzip-7z-")))
             factory = _Factory(ctx, root, by_name)
             with open(self.path, "rb") as fp:  # dosya nesnesi -> tek iş parçacığı
                 z = self._open(fp)

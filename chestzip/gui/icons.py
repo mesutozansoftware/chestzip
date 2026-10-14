@@ -1,4 +1,4 @@
-"""Sandık'a özgü SVG ikonlar.
+"""ChestZip'a özgü SVG ikonlar.
 
 İşletim sisteminin ikon temasını kullanmak yerine tüm ikonlar burada çizilir;
 böylece uygulama Windows, macOS ve Linux'ta birebir aynı görünür.
@@ -14,7 +14,7 @@ from PySide6.QtSvg import QSvgRenderer
 
 _S = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">{}</svg>'
 
-# Sandık (sandık = ahşap ceviz sandık) — uygulama ikonu
+# ChestZip — uygulama ikonu
 CHEST = """
 <rect x="5" y="20" width="38" height="22" rx="3" fill="#a0612b"/>
 <path d="M5 20 Q5 7 24 7 Q43 7 43 20 Z" fill="#c07a3a"/>

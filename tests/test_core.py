@@ -10,9 +10,9 @@ from pathlib import Path
 
 import pytest
 
-from sandik.api import Archive, create_archive
-from sandik.errors import (PasswordRequired, SafetyError, UnsupportedOperation, WrongPassword)
-from sandik.safety import CancelToken, Limits, MiB
+from chestzip.api import Archive, create_archive
+from chestzip.errors import (PasswordRequired, SafetyError, UnsupportedOperation, WrongPassword)
+from chestzip.safety import CancelToken, Limits, MiB
 
 FORMATS = ["zip", "7z", "tar", "tar.gz", "tar.bz2", "tar.xz"]
 
@@ -263,7 +263,7 @@ def test_cancel(tmp_path, tree):
     create_archive(out, [tree], fmt="zip")
     tok = CancelToken()
     tok.cancel()
-    from sandik.errors import Cancelled
+    from chestzip.errors import Cancelled
     with Archive(out) as a, pytest.raises(Cancelled):
         a.extract(tmp_path / "dst", cancel=tok)
 
@@ -284,7 +284,7 @@ def test_cancel_midstream_leaves_no_partial(tmp_path, fmt):
     def progress(done, total, name):
         tok.cancel()  # ilk bildirimde iptal et
 
-    from sandik.errors import Cancelled
+    from chestzip.errors import Cancelled
     dst = tmp_path / "dst"
     with Archive(out) as a, pytest.raises(Cancelled):
         a.extract(dst, progress=progress, cancel=tok)
@@ -298,7 +298,7 @@ def test_7z_stream_limit(tmp_path):
     out = tmp_path / "z.7z"
     create_archive(out, [src], fmt="7z")
     a = Archive(out, limits=Limits(max_total_size=10 * MiB))
-    from sandik.safety import ExtractContext
+    from chestzip.safety import ExtractContext
     ctx = ExtractContext(tmp_path / "dst", a.limits, a.size)
     with pytest.raises(SafetyError):
         a.backend.extract(ctx, None)  # ön kontrolü atlayıp doğrudan akışı dene

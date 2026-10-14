@@ -1,4 +1,4 @@
-"""Sandık'ın üst düzey API'si. Arayüz ve komut satırı yalnızca bunu kullanır."""
+"""ChestZip'ın üst düzey API'si. Arayüz ve komut satırı yalnızca bunu kullanır."""
 
 from __future__ import annotations
 
@@ -110,7 +110,7 @@ class Archive:
 
     def extract_to_temp(self, name: str, cancel: Optional[CancelToken] = None) -> Path:
         """Tek bir dosyayı görüntülemek için geçici klasöre çıkartır."""
-        tmp = Path(tempfile.mkdtemp(prefix="sandik-view-"))
+        tmp = Path(tempfile.mkdtemp(prefix="chestzip-view-"))
         self.extract(tmp, [name], overwrite="always", cancel=cancel)
         for root, _dirs, files in os.walk(tmp):
             for f in files:
@@ -170,7 +170,7 @@ def create_archive(out_path: str | Path, paths: Iterable[str | Path], fmt: Optio
         raise UnsupportedOperation(t("err.no_password_support", fmt=fmt.upper()))
     sources = collect_sources(paths)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(prefix=".sandik-", suffix=".part", dir=out_path.parent)
+    fd, tmp = tempfile.mkstemp(prefix=".chestzip-", suffix=".part", dir=out_path.parent)
     os.close(fd)
     os.unlink(tmp)
     try:

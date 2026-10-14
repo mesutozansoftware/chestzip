@@ -506,7 +506,7 @@ class OutFile:
         self._f = None
         if target is not None:
             for i in range(1000):
-                tmp = target.with_name(f".{target.name}.{i}.sandik-part")
+                tmp = target.with_name(f".{target.name}.{i}.chestzip-part")
                 try:
                     self._f = open(tmp, "xb")
                     self._tmp = tmp

@@ -1,12 +1,12 @@
 [Desktop Entry]
 Type=Application
-Name=Sandık
+Name=ChestZip
 GenericName=Archive Manager
 GenericName[tr]=Arşiv Yöneticisi
 Comment=Open-source archive manager with zip bomb protection
 Comment[tr]=Zip bombası korumalı açık kaynaklı arşiv yöneticisi
-Exec=sandik %F
-Icon=sandik
+Exec=chestzip %F
+Icon=chestzip
 Terminal=false
 Categories=Utility;Archiving;Compression;
 MimeType=application/zip;application/x-7z-compressed;application/x-tar;application/x-compressed-tar;application/x-bzip-compressed-tar;application/x-xz-compressed-tar;application/gzip;application/x-bzip2;application/x-xz;application/vnd.rar;application/x-rar;

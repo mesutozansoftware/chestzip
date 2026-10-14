@@ -1,4 +1,4 @@
-"""Sandık genelinde kullanılan hata tipleri."""
+"""ChestZip genelinde kullanılan hata tipleri."""
 
 
 class ArchiveError(Exception):

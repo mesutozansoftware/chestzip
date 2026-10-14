@@ -1,9 +1,9 @@
 """RAR desteği — YALNIZCA AÇMA.
 
-RAR sıkıştırma algoritması tescillidir; Sandık RAR arşivi oluşturmaz ve
+RAR sıkıştırma algoritması tescillidir; ChestZip RAR arşivi oluşturmaz ve
 unRAR kaynak kodunu içermez. Açma işlemi ``rarfile`` (ISC lisanslı) kütüphanesi
 üzerinden sistemde kurulu harici bir araçla (unrar, unar, 7z veya bsdtar)
-yapılır. Akış yine Sandık'ın güvenlik katmanından geçer.
+yapılır. Akış yine ChestZip'ın güvenlik katmanından geçer.
 """
 
 from __future__ import annotations

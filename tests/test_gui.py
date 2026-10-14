@@ -6,8 +6,8 @@ import pytest
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 QtWidgets = pytest.importorskip("PySide6.QtWidgets")
 
-from sandik.api import Archive, create_archive  # noqa: E402
-from sandik.settings import Settings  # noqa: E402
+from chestzip.api import Archive, create_archive  # noqa: E402
+from chestzip.settings import Settings  # noqa: E402
 
 
 @pytest.fixture(scope="module")
@@ -26,7 +26,7 @@ def _wait(app, cond, timeout=10.0):
 
 
 def _window(app):
-    from sandik.gui.main_window import MainWindow
+    from chestzip.gui.main_window import MainWindow
     s = Settings()
     s.save = lambda: None  # testler kullanıcı ayarlarını değiştirmesin
     return MainWindow(s, lambda: None)
@@ -52,7 +52,7 @@ def test_open_archive_async(app, tmp_path):
 
 
 def test_task_overwrite_question_bridge(app, tmp_path):
-    from sandik.gui.workers import Task, connect_ask
+    from chestzip.gui.workers import Task, connect_ask
     f = tmp_path / "a.txt"
     f.write_text("yeni")
     arc = tmp_path / "a.zip"
@@ -82,7 +82,7 @@ def test_encrypted_7z_header_listing_needs_password(app, tmp_path):
     f.write_text("s")
     arc = tmp_path / "g.7z"
     create_archive(arc, [f], password="pw")
-    from sandik.gui import dialogs
+    from chestzip.gui import dialogs
     w = _window(app)
     orig = dialogs.ask_password
     dialogs.ask_password = lambda parent, name: "pw"

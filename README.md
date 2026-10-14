@@ -1,4 +1,4 @@
-# Sandık
+# ChestZip
 
 **Açık kaynaklı, çapraz platform arşiv yöneticisi.** Windows, macOS ve Linux'ta
 birebir aynı arayüzle çalışır ve zip bombalarına karşı yerleşik korumaya sahiptir.
@@ -22,7 +22,7 @@ sürükle-bırak, şifreli arşivler), fakat **WinRAR ile hiçbir bağlantısı 
 * Bütünlük testi (CRC), arşiv bilgisi ve güvenlik analizi
 * Üzerine yazma seçenekleri: sor / üzerine yaz / atla / otomatik yeniden adlandır
 * Türkçe ve İngilizce arayüz, açık ve koyu tema
-* Komut satırı arayüzü (`sandik l/x/a/t/d`)
+* Komut satırı arayüzü (`chestzip l/x/a/t/d`)
 
 ## Güvenlik: zip bombası ve diğer saldırılara karşı koruma
 
@@ -63,29 +63,29 @@ python3 -m venv .venv
 ```
 
 ```bash
-.venv/bin/sandik
+.venv/bin/chestzip
 ```
 
-Windows'ta `.venv\Scripts\sandik.exe` kullanın.
+Windows'ta `.venv\Scripts\chestzip.exe` kullanın.
 
 ### Komut satırı
 
 ```bash
-sandik a yedek.7z Belgeler/ -p gizli    # şifreli 7z oluştur
-sandik l yedek.7z -p gizli              # listele (+ güvenlik analizi)
-sandik x yedek.7z -o hedef/ -p gizli    # çıkart
-sandik t arsiv.zip                      # test et
-sandik d arsiv.zip eski/                # arşivden sil
-sandik x supheli.zip --max-ratio 100 --max-size 2G
+chestzip a yedek.7z Belgeler/ -p gizli    # şifreli 7z oluştur
+chestzip l yedek.7z -p gizli              # listele (+ güvenlik analizi)
+chestzip x yedek.7z -o hedef/ -p gizli    # çıkart
+chestzip t arsiv.zip                      # test et
+chestzip d arsiv.zip eski/                # arşivden sil
+chestzip x supheli.zip --max-ratio 100 --max-size 2G
 ```
 
 ### Kendi paketini derleme
 
 ```bash
-pip install . pyinstaller && python packaging/make_icons.py && pyinstaller packaging/sandik.spec
+pip install . pyinstaller && python packaging/make_icons.py && pyinstaller packaging/chestzip.spec
 ```
 
-Çıktı `dist/` klasörüne yazılır (macOS'ta `Sandık.app`). Paketlenmiş Windows
+Çıktı `dist/` klasörüne yazılır (macOS'ta `ChestZip.app`). Paketlenmiş Windows
 sürümü konsolsuz derlendiği için komut satırı kullanımı için `pip` kurulumunu tercih edin.
 
 ### RAR açma
@@ -95,11 +95,11 @@ RAR açmak için sistemde şu araçlardan biri bulunmalı: `unrar`, `unar`, `7z`
 
 ## Hukuki notlar
 
-* Sandık MIT lisanslıdır ve tamamen özgün koddan oluşur.
+* ChestZip MIT lisanslıdır ve tamamen özgün koddan oluşur.
 * WinRAR'ın adını, logosunu, ikonlarını, kodunu veya arayüz görsellerini kullanmaz.
   Tüm ikonlar bu projede SVG olarak çizilmiştir.
 * **RAR arşivi oluşturulmaz.** RAR sıkıştırma algoritması tescillidir; unRAR lisansı da
-  kodunun RAR sıkıştırıcı yapmak için kullanılmasını yasaklar. Sandık unRAR kodunu
+  kodunun RAR sıkıştırıcı yapmak için kullanılmasını yasaklar. ChestZip unRAR kodunu
   içermez; RAR açma yalnızca kullanıcının sisteminde kurulu harici bir araçla yapılır.
 * ZIP, 7z, tar, gzip, bzip2 ve xz açık biçimlerdir.
 * Bağımlılık lisansları: PySide6/Qt (LGPLv3), py7zr (LGPL-2.1), pyzipper (MIT),
@@ -108,7 +108,7 @@ RAR açmak için sistemde şu araçlardan biri bulunmalı: `unrar`, `unar`, `7z`
 ## Proje yapısı
 
 ```
-sandik/
+chestzip/
   safety.py          güvenlik katmanı (sınırlar, yol doğrulama, akış sayaçları)
   api.py             üst düzey API (Archive, create_archive)
   backends/          zip, 7z, tar/gz/bz2/xz, rar arka uçları

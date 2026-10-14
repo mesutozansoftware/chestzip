@@ -15,11 +15,11 @@ from .safety import Limits
 def config_dir() -> Path:
     if sys.platform.startswith("win"):
         base = Path(os.environ.get("APPDATA") or Path.home() / "AppData" / "Roaming")
-        return base / "Sandik"
+        return base / "ChestZip"
     if sys.platform == "darwin":
-        return Path.home() / "Library" / "Application Support" / "Sandik"
+        return Path.home() / "Library" / "Application Support" / "ChestZip"
     base = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config")
-    return base / "sandik"
+    return base / "chestzip"
 
 
 @dataclass

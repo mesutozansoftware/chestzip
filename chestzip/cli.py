@@ -2,12 +2,12 @@
 
 Örnekler::
 
-    sandik l arsiv.zip                 # içeriği listele
-    sandik x arsiv.7z -o hedef/        # çıkart
-    sandik a yeni.zip dosya klasor/    # arşiv oluştur / ekle
-    sandik a -p sifre gizli.7z belge/  # şifreli 7z
-    sandik t arsiv.tar.gz              # test et
-    sandik d arsiv.zip eski.txt        # arşivden sil
+    chestzip l arsiv.zip                 # içeriği listele
+    chestzip x arsiv.7z -o hedef/        # çıkart
+    chestzip a yeni.zip dosya klasor/    # arşiv oluştur / ekle
+    chestzip a -p sifre gizli.7z belge/  # şifreli 7z
+    chestzip t arsiv.tar.gz              # test et
+    chestzip d arsiv.zip eski.txt        # arşivden sil
 """
 
 from __future__ import annotations
@@ -152,7 +152,7 @@ def cmd_delete(args, limits) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="sandik", description=f"{APP_NAME} — {t('app.tagline')}")
+    p = argparse.ArgumentParser(prog="chestzip", description=f"{APP_NAME} — {t('app.tagline')}")
     p.add_argument("--version", action="version", version=f"{APP_NAME} {__version__}")
     p.add_argument("--lang", choices=["tr", "en"])
     sub = p.add_subparsers(dest="cmd")

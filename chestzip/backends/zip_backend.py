@@ -165,7 +165,7 @@ class ZipBackend(Backend):
         """Seçilen kayıtları siler. Veri yeniden sıkıştırılmadan ham olarak
         kopyalandığı için şifreli kayıtlar da korunur."""
         keep = [e.ref for e in self.entries() if e.name not in names]
-        fd, tmp = tempfile.mkstemp(prefix=".sandik-", suffix=".zip", dir=self.path.parent)
+        fd, tmp = tempfile.mkstemp(prefix=".chestzip-", suffix=".zip", dir=self.path.parent)
         os.close(fd)
         try:
             with open(self.path, "rb") as src, zipfile.ZipFile(tmp, "w") as out:

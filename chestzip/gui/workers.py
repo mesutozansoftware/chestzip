@@ -41,7 +41,7 @@ class Task(QThread):
         try:
             result = self.fn(self._progress, self.cancel, self._ask)
         except BaseException as e:  # noqa: BLE001 — her hata arayüze iletilir
-            e.__sandik_tb__ = traceback.format_exc()
+            e.__chestzip_tb__ = traceback.format_exc()
             self.failed.emit(e)
         else:
             self.succeeded.emit(result)

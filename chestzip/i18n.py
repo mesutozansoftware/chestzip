@@ -220,7 +220,7 @@ STRINGS: dict[str, tuple[str, str]] = {
 
 
 def detect_language() -> str:
-    for var in ("SANDIK_LANG", "LC_ALL", "LC_MESSAGES", "LANG"):
+    for var in ("CHESTZIP_LANG", "LC_ALL", "LC_MESSAGES", "LANG"):
         v = os.environ.get(var)
         if v:
             return "tr" if v.lower().startswith("tr") else "en"

@@ -1,6 +1,6 @@
 """TAR, TAR.GZ, TAR.BZ2, TAR.XZ ve tek dosyalık GZ/BZ2/XZ desteği.
 
-Sıkıştırılmış akışlar Sandık tarafından açılır ve her bayt StreamGuard'dan
+Sıkıştırılmış akışlar ChestZip tarafından açılır ve her bayt StreamGuard'dan
 geçer; böylece başlığında boyut bilgisi bulunmayan biçimlerde de zip bombası
 tespit edilir.
 """
@@ -168,7 +168,7 @@ class TarBackend(Backend):
     def _rebuild(self, drop: set[str], sources: list[Source], level: int,
                  progress: Optional[ProgressFn], cancel: Optional[CancelToken]) -> None:
         """Arşivi geçici dosyaya yeniden yazar (silme ve ekleme için)."""
-        fd, tmp = tempfile.mkstemp(prefix=".sandik-", suffix=".tar", dir=self.path.parent)
+        fd, tmp = tempfile.mkstemp(prefix=".chestzip-", suffix=".tar", dir=self.path.parent)
         os.close(fd)
         replace = {s.arcname for s in sources}
         try:

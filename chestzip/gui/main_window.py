@@ -606,7 +606,7 @@ class MainWindow(QMainWindow):
             box.setWindowTitle(t("dlg.error"))
             box.setIcon(QMessageBox.Icon.Critical)
             box.setText(str(err) or type(err).__name__)
-            tb = getattr(err, "__sandik_tb__", None)
+            tb = getattr(err, "__chestzip_tb__", None)
             if tb and not isinstance(err, (ArchiveError, OSError)):
                 box.setDetailedText(tb)
         box.exec()
@@ -967,7 +967,7 @@ class MainWindow(QMainWindow):
                                             and not self.archive.password):
             return []
         import tempfile
-        tmp = Path(tempfile.mkdtemp(prefix="sandik-drag-"))
+        tmp = Path(tempfile.mkdtemp(prefix="chestzip-drag-"))
         self._temp_dirs.append(tmp)
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:

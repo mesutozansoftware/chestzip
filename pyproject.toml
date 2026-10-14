@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sandik"
+name = "chestzip"
 version = "1.0.0"
 description = "Açık kaynaklı, çapraz platform arşiv yöneticisi (zip bombası korumalı)"
 readme = "README.md"
@@ -27,13 +27,13 @@ classifiers = [
 dev = ["pytest>=7"]
 
 [project.scripts]
-sandik = "sandik.cli:main"
+chestzip = "chestzip.cli:main"
 
 [project.gui-scripts]
-sandik-gui = "sandik.gui.app:main"
+chestzip-gui = "chestzip.gui.app:main"
 
 [tool.setuptools.packages.find]
-include = ["sandik*"]
+include = ["chestzip*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
