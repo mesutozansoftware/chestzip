@@ -350,22 +350,12 @@ class MainWindow(QMainWindow):
         sb.addWidget(self.status_left, 1)
         self.lock_label = QLabel(t("status.encrypted"))
         sb.addPermanentWidget(self.lock_label)
-        self.safety_label = QLabel()
-        sb.addPermanentWidget(self.safety_label)
-        self.update_safety_label()
 
         enter = QAction(self)
         enter.setShortcuts([QKeySequence(Qt.Key.Key_Return), QKeySequence(Qt.Key.Key_Enter)])
         enter.triggered.connect(lambda: self.on_activate(self.view.currentIndex()))
         self.view.addAction(enter)
         self.setAcceptDrops(False)
-
-    def update_safety_label(self) -> None:
-        on = self.settings.limits.enabled
-        self.safety_label.setText(t("status.safety_on") if on else t("status.safety_off"))
-        self.safety_label.setObjectName("safetyOn" if on else "safetyOff")
-        self.safety_label.style().unpolish(self.safety_label)
-        self.safety_label.style().polish(self.safety_label)
 
     # ------------------------------------------------------------- gezinme
     def navigate_fs(self, path: Optional[Path], select: Optional[str] = None) -> None:
@@ -948,7 +938,6 @@ class MainWindow(QMainWindow):
         dlg.apply()
         if self.archive is not None:
             self.archive.limits = self.settings.limits
-        self.update_safety_label()
         if self.settings.language != old_lang or self.settings.theme != old_theme:
             self.restart_cb()
 
