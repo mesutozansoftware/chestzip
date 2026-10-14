@@ -161,7 +161,7 @@ def create_archive(out_path: str | Path, paths: Iterable[str | Path], fmt: Optio
     """Yeni bir arşiv oluşturur. Hata/iptal olursa yarım dosya bırakmaz."""
     from .backends import format_for_filename
     out_path = Path(out_path)
-    fmt = fmt or format_for_filename(out_path.name) or "zip"
+    fmt = fmt or format_for_filename(out_path.name) or "chz"
     if fmt == "rar":
         raise UnsupportedOperation(t("err.rar_create"))
     if fmt not in CREATE_FORMATS:
@@ -174,7 +174,10 @@ def create_archive(out_path: str | Path, paths: Iterable[str | Path], fmt: Optio
     os.close(fd)
     os.unlink(tmp)
     try:
-        if fmt == "zip":
+        if fmt == "chz":
+            from .backends.chz_backend import create_chz
+            create_chz(tmp, sources, level, password, progress, cancel)
+        elif fmt == "zip":
             from .backends.zip_backend import create_zip
             create_zip(tmp, sources, level, password, progress, cancel)
         elif fmt == "7z":

@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QEvent, QObject, QTimer
 from PySide6.QtWidgets import QApplication
 
 from .. import APP_NAME, APP_ID
@@ -13,6 +13,27 @@ from ..i18n import set_language
 from ..settings import Settings
 from .icons import icon
 from .theme import apply_theme
+
+
+class _FileOpenFilter(QObject):
+    """macOS'ta Finder'dan çift tıklanan dosyalar argüman olarak değil,
+    FileOpen olayıyla gelir."""
+
+    def __init__(self, state: dict) -> None:
+        super().__init__()
+        self.state = state
+
+    def eventFilter(self, obj, event) -> bool:
+        if event.type() == QEvent.Type.FileOpen:
+            path = event.file()
+            if path:
+                win = self.state.get("win")
+                if win is None:
+                    self.state.setdefault("pending", []).append(path)
+                else:
+                    _handle_paths(win, [Path(path)])
+                return True
+        return False
 
 
 def run(paths: list[str] | None = None) -> int:
@@ -23,6 +44,8 @@ def run(paths: list[str] | None = None) -> int:
     app.setWindowIcon(icon("app"))
     settings = Settings.load()
     state: dict = {}
+    file_filter = _FileOpenFilter(state)
+    app.installEventFilter(file_filter)
 
     def build() -> None:
         from .main_window import MainWindow
@@ -41,6 +64,8 @@ def run(paths: list[str] | None = None) -> int:
 
     build()
     _handle_paths(state["win"], [Path(p) for p in (paths or [])])
+    for p in state.pop("pending", []):
+        _handle_paths(state["win"], [Path(p)])
     return app.exec()
 
 

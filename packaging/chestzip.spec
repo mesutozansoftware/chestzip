@@ -22,7 +22,8 @@ a = Analysis(
     [str(ROOT / "packaging" / "launcher.py")],
     pathex=[str(ROOT)],
     binaries=_bin_files,
-    datas=[(str(ROOT / "LICENSE"), "."), (str(ROOT / "THIRD_PARTY_NOTICES.md"), ".")],
+    datas=[(str(ROOT / "LICENSE"), "."), (str(ROOT / "THIRD_PARTY_NOTICES.md"), ".")] +
+          ([(str(ICONS / "chz-document.icns"), ".")] if sys.platform == "darwin" else []),
     hiddenimports=["chestzip.gui.app", "PySide6.QtSvg"],
     excludes=["tkinter", "py7zz", "PySide6.QtWebEngineCore", "PySide6.QtQml", "PySide6.QtQuick",
               "PySide6.Qt3DCore", "PySide6.QtMultimedia"],
@@ -38,7 +39,23 @@ if sys.platform == "darwin":
         info_plist={
             "CFBundleShortVersionString": "1.0.0",
             "NSHighResolutionCapable": True,
+            "UTExportedTypeDeclarations": [{
+                "UTTypeIdentifier": "org.chestzip.chz",
+                "UTTypeDescription": "ChestZip Archive",
+                "UTTypeConformsTo": ["public.data", "public.archive"],
+                "UTTypeIconFile": "chz-document.icns",
+                "UTTypeTagSpecification": {
+                    "public.filename-extension": ["chz"],
+                    "public.mime-type": ["application/x-chestzip"],
+                },
+            }],
             "CFBundleDocumentTypes": [{
+                "CFBundleTypeName": "ChestZip Archive",
+                "CFBundleTypeRole": "Editor",
+                "LSHandlerRank": "Owner",
+                "CFBundleTypeIconFile": "chz-document.icns",
+                "LSItemContentTypes": ["org.chestzip.chz"],
+            }, {
                 "CFBundleTypeName": "Archive",
                 "CFBundleTypeRole": "Editor",
                 "LSHandlerRank": "Alternate",

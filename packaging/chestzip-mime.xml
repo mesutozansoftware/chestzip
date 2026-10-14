@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Linux: xdg-mime install packaging/chestzip-mime.xml -->
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-chestzip">
+    <comment>ChestZip archive</comment>
+    <comment xml:lang="tr">ChestZip arşivi</comment>
+    <generic-icon name="package-x-generic"/>
+    <icon name="application-x-chestzip"/>
+    <magic priority="80">
+      <match type="string" offset="0" value="CHZ!\x1a\r\n\0"/>
+    </magic>
+    <glob pattern="*.chz"/>
+  </mime-type>
+</mime-info>

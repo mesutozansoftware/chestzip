@@ -14,9 +14,11 @@ from .tar_backend import COMPRESSORS, open_decompressed, sniff_compression
 
 SEVENZ_MAGIC = b"7z\xbc\xaf\x27\x1c"
 RAR_MAGIC = b"Rar!\x1a\x07"
+CHZ_MAGIC = b"CHZ!\x1a\r\n\x00"
 
 # Oluşturulabilen biçimler ve varsayılan uzantıları
 CREATE_FORMATS = {
+    "chz": ".chz",
     "zip": ".zip",
     "7z": ".7z",
     "tar": ".tar",
@@ -27,9 +29,9 @@ CREATE_FORMATS = {
     "bz2": ".bz2",
     "xz": ".xz",
 }
-ENCRYPTABLE = {"zip", "7z"}
+ENCRYPTABLE = {"chz", "zip", "7z"}
 
-ARCHIVE_EXTENSIONS = (".zip", ".7z", ".rar", ".tar", ".tgz", ".tbz", ".tbz2", ".txz",
+ARCHIVE_EXTENSIONS = (".chz", ".zip", ".7z", ".rar", ".tar", ".tgz", ".tbz", ".tbz2", ".txz",
                       ".tar.gz", ".tar.bz2", ".tar.xz", ".gz", ".bz2", ".xz", ".jar",
                       ".cbz", ".cbr", ".epub", ".apk")
 
@@ -54,6 +56,8 @@ def detect_format(path: str | Path) -> str:
     try:
         with open(path, "rb") as f:
             head = f.read(512)
+            if head.startswith(CHZ_MAGIC):
+                return "chz"
             if head.startswith(SEVENZ_MAGIC):
                 return "7z"
             if head.startswith(RAR_MAGIC):
@@ -81,6 +85,9 @@ def detect_format(path: str | Path) -> str:
 def open_backend(path: str | Path, password: Optional[str] = None,
                  limits: Optional[Limits] = None, fmt: Optional[str] = None) -> Backend:
     fmt = fmt or detect_format(path)
+    if fmt == "chz":
+        from .chz_backend import ChzBackend
+        return ChzBackend(path, password)
     if fmt == "zip":
         from .zip_backend import ZipBackend
         return ZipBackend(path, password)

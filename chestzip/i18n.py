@@ -30,8 +30,8 @@ STRINGS: dict[str, tuple[str, str]] = {
                        "proprietary. Use ZIP or 7Z."),
     "err.rar_tool": ("RAR çözücüsü (gömülü 7-Zip) bulunamadı; uygulama eksik kurulmuş olabilir.",
                      "RAR decoder (bundled 7-Zip) not found; the installation may be incomplete."),
-    "err.no_password_support": ("{fmt} biçimi şifrelemeyi desteklemiyor. ZIP veya 7Z seçin.",
-                                "{fmt} does not support encryption. Choose ZIP or 7Z."),
+    "err.no_password_support": ("{fmt} biçimi şifrelemeyi desteklemiyor. CHZ, ZIP veya 7Z seçin.",
+                                "{fmt} does not support encryption. Choose CHZ, ZIP or 7Z."),
     "err.corrupt": ("Arşiv bozuk: {detail}", "Archive is corrupt: {detail}"),
     "sec.unsafe_paths": ("{n} kayıt hedef klasörün dışına yazmaya çalışıyor (ör. {first}); "
                          "bunlar atlanacak.",
@@ -144,8 +144,8 @@ STRINGS: dict[str, tuple[str, str]] = {
     "add.password2": ("Şifre tekrar:", "Repeat password:"),
     "add.mismatch": ("Şifreler eşleşmiyor.", "Passwords do not match."),
     "add.files": ("{n} öğe eklenecek", "{n} items will be added"),
-    "add.encrypt_note": ("ZIP: AES-256 • 7Z: AES-256 + dosya adları gizlenir",
-                         "ZIP: AES-256 • 7Z: AES-256 + file names hidden"),
+    "add.encrypt_note": ("CHZ ve 7Z: AES-256 + dosya adları gizlenir • ZIP: AES-256",
+                         "CHZ and 7Z: AES-256 + file names hidden • ZIP: AES-256"),
     "level.0": ("Depola (sıkıştırma yok)", "Store (no compression)"),
     "level.1": ("En hızlı", "Fastest"),
     "level.3": ("Hızlı", "Fast"),
@@ -205,11 +205,13 @@ STRINGS: dict[str, tuple[str, str]] = {
     "about.text": ("<h2>{app} {ver}</h2><p>{tag}</p>"
                    "<p>MIT lisanslı özgür yazılım. WinRAR ile hiçbir bağlantısı yoktur; "
                    "onun kodunu, adını veya görsellerini kullanmaz.</p>"
+                   "<p>Kendi biçimi: CHZ (.chz) — açık, belgeli, AES-256 şifreli.</p>"
                    "<p>Desteklenen biçimler: ZIP, 7Z, TAR, TAR.GZ, TAR.BZ2, TAR.XZ, GZ, "
                    "BZ2, XZ (oluşturma ve açma), RAR (yalnızca açma, gömülü 7-Zip ile).</p>",
                    "<h2>{app} {ver}</h2><p>{tag}</p>"
                    "<p>Free software under the MIT license. Not affiliated with WinRAR; it "
                    "uses none of its code, name or artwork.</p>"
+                   "<p>Native format: CHZ (.chz) — open, documented, AES-256 encrypted.</p>"
                    "<p>Formats: ZIP, 7Z, TAR, TAR.GZ, TAR.BZ2, TAR.XZ, GZ, BZ2, XZ (create "
                    "and extract), RAR (extract only, via bundled 7-Zip).</p>"),
     "drop.hint": ("Dosyaları buraya sürükleyin veya bir arşiv açın",

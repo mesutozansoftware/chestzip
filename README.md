@@ -6,10 +6,34 @@ birebir aynı arayüzle çalışır ve zip bombalarına karşı yerleşik koruma
 WinRAR'a benzer bir iş akışı sunar (araç çubuğu, arşiv içinde klasör gezme,
 sürükle-bırak, şifreli arşivler), fakat **WinRAR ile hiçbir bağlantısı yoktur**.
 
+## Kendi biçimimiz: CHZ (`.chz`)
+
+WinRAR'ın `.rar`'ı gibi ChestZip'in de kendi biçimi var. Farkı, CHZ'nin **açık ve
+belgeli** olması: [docs/CHZ_FORMAT.md](docs/CHZ_FORMAT.md).
+
+* **Güçlü sıkıştırma:** Solid bloklar + LZMA2. Oran 7z ile aynı seviyede.
+* **AES-256-GCM şifreleme:** Şifrelenince dosya adları da gizlenir.
+* **Bütünlük:** Her dosyanın BLAKE2b-256 özetiyle doğrulanır.
+* **Zip bombasına dayanıklı tasarım:** Blok boyutu sınırları, verinin çoğaltılması
+  yasak, kesin boyut kontrolü.
+* **Hızlı tek dosya çıkarma:** Arşivin tamamını açmak gerekmez.
+* **Varsayılan biçim:** Yeni arşivler CHZ olarak oluşturulur; `.chz` dosyaları
+  çift tıklayınca ChestZip'te açılır.
+
+Örnek ölçüm (16,5 MB, 1439 dosyalık Python kaynak kodu, seviye "Normal"):
+
+| Biçim | Boyut | Oran | Test süresi |
+|---|---|---|---|
+| CHZ | 3,72 MB | %22,5 | 0,3 s |
+| 7Z | 3,58 MB | %21,7 | 0,5 s |
+| TAR.XZ | 3,65 MB | %22,1 | 0,7 s |
+| ZIP | 6,38 MB | %38,7 | 0,1 s |
+
 ## Özellikler
 
 | Biçim | Oluştur | Aç / Çıkart | Ekle | Sil | Şifre |
 |---|:-:|:-:|:-:|:-:|:-:|
+| **CHZ (kendi biçimi)** | ✔ | ✔ | ✔ | ✔ | AES-256-GCM + gizli dosya adları |
 | ZIP | ✔ | ✔ | ✔ | ✔ | AES-256 |
 | 7Z | ✔ | ✔ | ✔ | – | AES-256 + gizli dosya adları |
 | TAR, TAR.GZ, TAR.BZ2, TAR.XZ | ✔ | ✔ | ✔ | ✔ | – |
@@ -71,6 +95,7 @@ Windows'ta `.venv\Scripts\chestzip.exe` kullanın.
 ### Komut satırı
 
 ```bash
+chestzip a yedek.chz Belgeler/ -p gizli   # şifreli CHZ oluştur (varsayılan biçim)
 chestzip a yedek.7z Belgeler/ -p gizli    # şifreli 7z oluştur
 chestzip l yedek.7z -p gizli              # listele (+ güvenlik analizi)
 chestzip x yedek.7z -o hedef/ -p gizli    # çıkart
@@ -78,6 +103,12 @@ chestzip t arsiv.zip                      # test et
 chestzip d arsiv.zip eski/                # arşivden sil
 chestzip x supheli.zip --max-ratio 100 --max-size 2G
 ```
+
+### Dosya ilişkilendirme (`.chz` çift tıklayınca açılsın)
+
+* **macOS:** `ChestZip.app` bir kez açıldığında `.chz` türü sisteme tanıtılır.
+* **Windows:** `ChestZip-setup-windows-x64.exe` kurulum programı `.chz`'yi ilişkilendirir.
+* **Linux:** Paket klasöründe `./linux-install.sh` komutunu çalıştırın.
 
 ### Kendi paketini derleme
 

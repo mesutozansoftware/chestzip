@@ -93,3 +93,19 @@ def test_encrypted_7z_header_listing_needs_password(app, tmp_path):
     finally:
         dialogs.ask_password = orig
         w.close()
+
+
+def test_macos_file_open_event_opens_chz(app, tmp_path):
+    """Finder'dan çift tıklama: QFileOpenEvent ile gelen .chz açılmalı."""
+    from PySide6.QtGui import QFileOpenEvent
+    from chestzip.gui.app import _FileOpenFilter
+    f = tmp_path / "belge.txt"
+    f.write_text("x")
+    arc = create_archive(tmp_path / "a.chz", [f])
+    w = _window(app)
+    filt = _FileOpenFilter({"win": w})
+    assert filt.eventFilter(app, QFileOpenEvent(str(arc)))
+    assert _wait(app, lambda: w.archive is not None)
+    assert w.archive.format == "chz"
+    assert [r.name for r in w.model.rows] == ["belge.txt"]
+    w.close()

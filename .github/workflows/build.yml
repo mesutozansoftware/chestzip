@@ -49,13 +49,22 @@ jobs:
       - name: Arşivle (Windows)
         if: runner.os == 'Windows'
         run: Compress-Archive -Path dist/ChestZip/* -DestinationPath ChestZip-windows-x64.zip
+      - name: Kurulum programı (Windows, .chz ilişkilendirmesi)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $iscc = (Get-Command iscc -ErrorAction SilentlyContinue).Source
+          if (-not $iscc) { $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress; $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+          & $iscc packaging\windows\chestzip.iss
+          Copy-Item dist\ChestZip-setup-windows-x64.exe .
       - name: Arşivle (macOS)
         if: runner.os == 'macOS'
         run: ditto -c -k --keepParent "dist/ChestZip.app" ChestZip-macos.zip
       - name: Arşivle (Linux)
         if: runner.os == 'Linux'
         run: |
-          cp packaging/chestzip.desktop packaging/icons/chestzip.png dist/ChestZip/
+          cp packaging/linux-install.sh packaging/chestzip.desktop packaging/chestzip-mime.xml packaging/icons/chestzip.png packaging/icons/chz-document.png dist/ChestZip/
           tar -C dist -czf ChestZip-linux-x64.tar.gz ChestZip
       - uses: actions/upload-artifact@v4
         with:

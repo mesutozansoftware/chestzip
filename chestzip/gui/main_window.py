@@ -70,6 +70,8 @@ class Row:
     def icon_name(self) -> str:
         if self.is_dir:
             return "folder"
+        if self.kind == "archive" and self.name.lower().endswith(".chz"):
+            return "chzdoc"
         return {"archive": "archive", "link": "link"}.get(self.kind, "file")
 
 

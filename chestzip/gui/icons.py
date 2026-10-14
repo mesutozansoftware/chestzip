@@ -26,8 +26,18 @@ CHEST = """
 <rect x="23.2" y="22" width="1.6" height="4" fill="#4a3410"/>
 """
 
+# .chz dosyalarının belge ikonu: kâğıt + sandık + "CHZ" etiketi
+CHZ_DOC = """
+<path d="M9 2 h21 l11 11 v31 a2 2 0 0 1 -2 2 H9 a2 2 0 0 1 -2 -2 V4 a2 2 0 0 1 2 -2 Z" fill="#fbf7f0" stroke="#a0612b" stroke-width="1.6"/>
+<path d="M30 2 v11 h11" fill="#efe3cf" stroke="#a0612b" stroke-width="1.6" stroke-linejoin="round"/>
+<g transform="translate(11 12) scale(0.54)">""" + CHEST + """</g>
+<rect x="7" y="35" width="34" height="9" rx="2" fill="#a0612b"/>
+<text x="24" y="42.3" font-family="Arial, Helvetica, sans-serif" font-size="8" font-weight="bold" fill="#fff" text-anchor="middle">CHZ</text>
+"""
+
 ICONS = {
     "app": CHEST,
+    "chzdoc": CHZ_DOC,
     "add": CHEST + """
 <circle cx="37" cy="36" r="10" fill="#2e9b4f" stroke="#fff" stroke-width="2"/>
 <path d="M37 31v10M32 36h10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>""",

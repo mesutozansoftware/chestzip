@@ -13,7 +13,7 @@ from chestzip.api import Archive, create_archive
 from chestzip.errors import (PasswordRequired, SafetyError, UnsupportedOperation, WrongPassword)
 from chestzip.safety import CancelToken, Limits, MiB
 
-FORMATS = ["zip", "7z", "tar", "tar.gz", "tar.bz2", "tar.xz"]
+FORMATS = ["chz", "zip", "7z", "tar", "tar.gz", "tar.bz2", "tar.xz"]
 
 
 @pytest.fixture
@@ -60,7 +60,7 @@ def test_single_stream(tmp_path, fmt):
     assert (tmp_path / "dst" / "veri.txt").read_bytes() == f.read_bytes()
 
 
-@pytest.mark.parametrize("fmt", ["zip", "7z"])
+@pytest.mark.parametrize("fmt", ["chz", "zip", "7z"])
 def test_password(tmp_path, tree, fmt):
     out = tmp_path / f"gizli.{fmt}"
     create_archive(out, [tree], fmt=fmt, password="S3cret!")
@@ -217,7 +217,7 @@ def test_disabled_limits_still_block_traversal(tmp_path):
 
 # ---------------------------------------------------------------- işlemler
 
-@pytest.mark.parametrize("fmt", ["zip", "tar.gz"])
+@pytest.mark.parametrize("fmt", ["chz", "zip", "tar.gz"])
 def test_delete_and_add(tmp_path, tree, fmt):
     out = tmp_path / f"d.{fmt}"
     create_archive(out, [tree], fmt=fmt)
@@ -232,9 +232,10 @@ def test_delete_and_add(tmp_path, tree, fmt):
         assert a.test().files == 2
 
 
-def test_delete_encrypted_zip_keeps_data(tmp_path, tree):
-    out = tmp_path / "enc.zip"
-    create_archive(out, [tree], fmt="zip", password="pw")
+@pytest.mark.parametrize("fmt", ["zip", "chz"])
+def test_delete_encrypted_keeps_data(tmp_path, tree, fmt):
+    out = tmp_path / f"enc.{fmt}"
+    create_archive(out, [tree], fmt=fmt, password="pw")
     a = Archive(out, password="pw")
     a.delete(["Proje/a.txt"])
     a.extract(tmp_path / "dst")
@@ -272,7 +273,7 @@ def test_rar_create_refused(tmp_path, tree):
         create_archive(tmp_path / "x.rar", [tree], fmt="rar")
 
 
-@pytest.mark.parametrize("fmt", ["7z", "zip", "tar.xz"])
+@pytest.mark.parametrize("fmt", ["chz", "7z", "zip", "tar.xz"])
 def test_cancel_midstream_leaves_no_partial(tmp_path, fmt):
     src = tmp_path / "big.bin"
     src.write_bytes(os.urandom(6 * MiB))

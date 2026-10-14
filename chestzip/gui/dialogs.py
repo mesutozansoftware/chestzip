@@ -21,7 +21,7 @@ from .icons import icon, pixmap
 
 LEVELS = [0, 1, 3, 5, 7, 9]
 FORMAT_LABELS = {
-    "zip": "ZIP", "7z": "7Z", "tar": "TAR", "tar.gz": "TAR.GZ", "tar.bz2": "TAR.BZ2",
+    "chz": "CHZ (ChestZip)", "zip": "ZIP", "7z": "7Z", "tar": "TAR", "tar.gz": "TAR.GZ", "tar.bz2": "TAR.BZ2",
     "tar.xz": "TAR.XZ", "gz": "GZ", "bz2": "BZ2", "xz": "XZ",
 }
 
@@ -307,7 +307,7 @@ class SettingsDialog(QDialog):
         self.theme.setCurrentIndex(max(self.theme.findData(settings.theme), 0))
         f.addRow(t("act.theme") + ":", self.theme)
         self.fmt = QComboBox()
-        for key in ("zip", "7z", "tar", "tar.gz", "tar.bz2", "tar.xz"):
+        for key in ("chz", "zip", "7z", "tar", "tar.gz", "tar.bz2", "tar.xz"):
             self.fmt.addItem(FORMAT_LABELS[key], key)
         self.fmt.setCurrentIndex(max(self.fmt.findData(settings.default_format), 0))
         f.addRow(t("add.format"), self.fmt)

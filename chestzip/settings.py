@@ -22,13 +22,28 @@ def config_dir() -> Path:
     return base / "chestzip"
 
 
+def _legacy_settings():
+    """Uygulamanın eski adıyla (Sandık) kaydedilmiş ayarları taşır.
+    Eski varsayılan biçim (zip) taşınmaz; yeni varsayılan CHZ'dir."""
+    new = config_dir()
+    for name in ("Sandik", "sandik"):
+        old = new.with_name(name) / "settings.json"
+        try:
+            data = json.loads(old.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        return {k: v for k, v in data.items()
+                if k in ("language", "theme", "limits", "last_dir", "overwrite", "window")}
+    return None
+
+
 @dataclass
 class Settings:
     language: str = field(default_factory=detect_language)
     theme: str = "light"
     limits: Limits = field(default_factory=Limits)
     last_dir: str = ""
-    default_format: str = "zip"
+    default_format: str = "chz"
     default_level: int = 5
     overwrite: str = "ask"
     window: list = field(default_factory=list)
@@ -40,7 +55,9 @@ class Settings:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
-            return s
+            data = _legacy_settings()
+            if data is None:
+                return s
         for k, v in data.items():
             if k == "limits":
                 s.limits = Limits.from_dict(v)
