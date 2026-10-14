@@ -1,0 +1,30 @@
+app-id: io.github.mesutozansoftware.ChestZip
+runtime: org.freedesktop.Platform
+runtime-version: "24.08"
+sdk: org.freedesktop.Sdk
+command: chestzip
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  # Arşiv yöneticisi kullanıcının dosyalarını açıp yazabilmeli
+  - --filesystem=home
+  - --filesystem=xdg-download
+  - --filesystem=/media
+  - --filesystem=/run/media
+modules:
+  - python-deps.json
+  - name: chestzip
+    buildsystem: simple
+    build-commands:
+      - cp -r chestzip "$(python3 -c "import sysconfig;print(sysconfig.get_path('purelib', vars={'base':'/app'}))")/"
+      - install -Dm755 packaging/flatpak/chestzip.sh ${FLATPAK_DEST}/bin/chestzip
+      - install -Dm644 packaging/flatpak/io.github.mesutozansoftware.ChestZip.metainfo.xml ${FLATPAK_DEST}/share/metainfo/io.github.mesutozansoftware.ChestZip.metainfo.xml
+      - sed -e 's|^Exec=.*|Exec=chestzip %F|' -e 's|^Icon=.*|Icon=io.github.mesutozansoftware.ChestZip|' packaging/chestzip.desktop > io.github.mesutozansoftware.ChestZip.desktop
+      - install -Dm644 io.github.mesutozansoftware.ChestZip.desktop ${FLATPAK_DEST}/share/applications/io.github.mesutozansoftware.ChestZip.desktop
+      - install -Dm644 packaging/icons/chestzip.png ${FLATPAK_DEST}/share/icons/hicolor/512x512/apps/io.github.mesutozansoftware.ChestZip.png
+      - install -Dm644 packaging/chestzip-mime.xml ${FLATPAK_DEST}/share/mime/packages/io.github.mesutozansoftware.ChestZip.xml
+    sources:
+      - type: dir
+        path: ../..

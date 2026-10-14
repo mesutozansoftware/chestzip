@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.mesutozansoftware.ChestZip</id>
+  <name>ChestZip</name>
+  <summary>Archive manager with zip bomb protection</summary>
+  <summary xml:lang="tr">Zip bombası korumalı arşiv yöneticisi</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <developer id="io.github.mesutozansoftware">
+    <name>mesutozansoftware</name>
+  </developer>
+  <description>
+    <p>ChestZip creates and extracts archives in its own open CHZ format as well as
+    ZIP, 7Z, TAR, TAR.GZ, TAR.BZ2 and TAR.XZ, and extracts RAR archives.</p>
+    <p>It is built to be safe: it detects zip bombs while extracting, blocks Zip Slip
+    path traversal and malicious symbolic links, and never fills up your disk.</p>
+    <ul>
+      <li>CHZ format: solid LZMA2 compression, AES-256-GCM encryption with hidden file names</li>
+      <li>Password-protected ZIP (AES-256) and 7Z</li>
+      <li>Browse inside archives, drag and drop, test integrity</li>
+      <li>Same interface on Linux, Windows and macOS, in English and Turkish</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.mesutozansoftware.ChestZip.desktop</launchable>
+  <url type="homepage">https://github.com/mesutozansoftware/chestzip</url>
+  <url type="bugtracker">https://github.com/mesutozansoftware/chestzip/issues</url>
+  <url type="vcs-browser">https://github.com/mesutozansoftware/chestzip</url>
+  <content_rating type="oars-1.1"/>
+  <provides>
+    <mediatype>application/x-chestzip</mediatype>
+  </provides>
+  <categories>
+    <category>Utility</category>
+    <category>Archiving</category>
+  </categories>
+  <releases>
+    <release version="1.0.0" date="2026-10-14">
+      <description><p>First release.</p></description>
+    </release>
+  </releases>
+</component>
