@@ -28,8 +28,8 @@ STRINGS: dict[str, tuple[str, str]] = {
                        "ZIP veya 7Z kullanın.",
                        "Creating RAR is not supported: the RAR compression algorithm is "
                        "proprietary. Use ZIP or 7Z."),
-    "err.rar_tool": ("RAR açmak için sistemde unrar, unar, 7z veya bsdtar bulunmalı.",
-                     "Opening RAR needs unrar, unar, 7z or bsdtar installed."),
+    "err.rar_tool": ("RAR çözücüsü (gömülü 7-Zip) bulunamadı; uygulama eksik kurulmuş olabilir.",
+                     "RAR decoder (bundled 7-Zip) not found; the installation may be incomplete."),
     "err.no_password_support": ("{fmt} biçimi şifrelemeyi desteklemiyor. ZIP veya 7Z seçin.",
                                 "{fmt} does not support encryption. Choose ZIP or 7Z."),
     "err.corrupt": ("Arşiv bozuk: {detail}", "Archive is corrupt: {detail}"),
@@ -206,12 +206,12 @@ STRINGS: dict[str, tuple[str, str]] = {
                    "<p>MIT lisanslı özgür yazılım. WinRAR ile hiçbir bağlantısı yoktur; "
                    "onun kodunu, adını veya görsellerini kullanmaz.</p>"
                    "<p>Desteklenen biçimler: ZIP, 7Z, TAR, TAR.GZ, TAR.BZ2, TAR.XZ, GZ, "
-                   "BZ2, XZ (oluşturma ve açma), RAR (yalnızca açma, harici araçla).</p>",
+                   "BZ2, XZ (oluşturma ve açma), RAR (yalnızca açma, gömülü 7-Zip ile).</p>",
                    "<h2>{app} {ver}</h2><p>{tag}</p>"
                    "<p>Free software under the MIT license. Not affiliated with WinRAR; it "
                    "uses none of its code, name or artwork.</p>"
                    "<p>Formats: ZIP, 7Z, TAR, TAR.GZ, TAR.BZ2, TAR.XZ, GZ, BZ2, XZ (create "
-                   "and extract), RAR (extract only, via external tool).</p>"),
+                   "and extract), RAR (extract only, via bundled 7-Zip).</p>"),
     "drop.hint": ("Dosyaları buraya sürükleyin veya bir arşiv açın",
                   "Drag files here or open an archive"),
     "filter.archives": ("Arşivler", "Archives"),

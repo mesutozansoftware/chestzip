@@ -2,7 +2,6 @@ import gzip
 import io
 import os
 import struct
-import sys
 import tarfile
 import zipfile
 import zlib

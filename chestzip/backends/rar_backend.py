@@ -1,13 +1,18 @@
 """RAR desteği — YALNIZCA AÇMA.
 
-RAR sıkıştırma algoritması tescillidir; ChestZip RAR arşivi oluşturmaz ve
-unRAR kaynak kodunu içermez. Açma işlemi ``rarfile`` (ISC lisanslı) kütüphanesi
-üzerinden sistemde kurulu harici bir araçla (unrar, unar, 7z veya bsdtar)
-yapılır. Akış yine ChestZip'ın güvenlik katmanından geçer.
+RAR sıkıştırma algoritması tescillidir; ChestZip RAR arşivi oluşturmaz.
+Başlıklar ``rarfile`` (ISC) ile okunur; veri, ``py7zz`` paketiyle birlikte gelen
+resmi 7-Zip programıyla (``7zz``) açılır. Böylece kullanıcının ek bir araç
+kurması gerekmez ve her işletim sisteminde aynı çözücü kullanılır. 7-Zip
+bulunamazsa sistemdeki unrar/unar/7z/bsdtar denenir. Açılan veri yine
+ChestZip'in güvenlik katmanından geçer.
 """
 
 from __future__ import annotations
 
+import importlib.util
+import sys
+from pathlib import Path
 from typing import Optional
 
 from ..errors import ArchiveError, PasswordRequired, WrongPassword
@@ -20,6 +25,51 @@ try:
 except ImportError:  # pragma: no cover
     rarfile = None
 
+_EXE = "7zz.exe" if sys.platform.startswith("win") else "7zz"
+
+
+def bundled_7zz() -> Optional[Path]:
+    """Uygulamayla birlikte gelen 7zz programının yolu."""
+    candidates = []
+    if getattr(sys, "frozen", False):  # PyInstaller paketi
+        candidates.append(Path(getattr(sys, "_MEIPASS", "")) / "chestzip_bin" / _EXE)
+    # py7zz modülünü içe aktarmadan (ağ/güncelleme kodu çalışmasın) yerini bul
+    spec = importlib.util.find_spec("py7zz")
+    if spec and spec.origin:
+        candidates.append(Path(spec.origin).parent / "bin" / _EXE)
+    for c in candidates:
+        if c.is_file():
+            return c
+    return None
+
+
+_tool_ready = False
+
+
+def _local(dt):
+    """RAR5 zamanları UTC'dir; görüntüleme için yerel saate çevir."""
+    if dt is not None and dt.tzinfo is not None:
+        return dt.astimezone().replace(tzinfo=None)
+    return dt
+
+
+def _setup_tool() -> None:
+    global _tool_ready
+    if _tool_ready:
+        return
+    exe = bundled_7zz()
+    if exe is not None:
+        rarfile.SEVENZIP2_TOOL = str(exe)
+        try:
+            rarfile.tool_setup(unrar=False, unar=False, bsdtar=False, sevenzip=False,
+                               sevenzip2=True, force=True)
+            _tool_ready = True
+            return
+        except rarfile.RarCannotExec:
+            pass
+    rarfile.tool_setup(force=True)  # yedek: sistemdeki araçlar
+    _tool_ready = True
+
 
 class RarBackend(Backend):
     format_name = "RAR"
@@ -29,6 +79,10 @@ class RarBackend(Backend):
         super().__init__(path, password)
         if rarfile is None:
             raise ArchiveError(t("err.rar_tool"))
+        try:
+            _setup_tool()
+        except rarfile.RarCannotExec as e:
+            raise ArchiveError(t("err.rar_tool")) from e
         self._entries: Optional[list[Entry]] = None
 
     def _open(self):
@@ -47,6 +101,10 @@ class RarBackend(Backend):
                     rf.setpassword(self.password)
             except rarfile.Error as e:
                 raise WrongPassword(t("err.wrong_password")) from e
+        if not self.password and rf.needs_password() and not rf.infolist():
+            # Başlığı şifreli arşiv: rarfile hata vermeden boş liste döndürür.
+            rf.close()
+            raise PasswordRequired(t("err.password_required"))
         return rf
 
     def needs_password(self) -> bool:
@@ -63,8 +121,8 @@ class RarBackend(Backend):
                 for i in rf.infolist():
                     out.append(make_entry(
                         i.filename, is_dir=i.is_dir(), size=i.file_size or 0,
-                        packed=i.compress_size, mtime=i.mtime if hasattr(i, "mtime") and i.mtime
-                        else None, crc=i.CRC, encrypted=i.needs_password(),
+                        packed=i.compress_size, mtime=_local(getattr(i, "mtime", None)),
+                        crc=i.CRC, encrypted=i.needs_password(),
                         kind="dir" if i.is_dir() else ("symlink" if i.is_symlink() else "file"),
                         ref=i))
             self._entries = out

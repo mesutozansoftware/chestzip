@@ -14,7 +14,7 @@ sürükle-bırak, şifreli arşivler), fakat **WinRAR ile hiçbir bağlantısı 
 | 7Z | ✔ | ✔ | ✔ | – | AES-256 + gizli dosya adları |
 | TAR, TAR.GZ, TAR.BZ2, TAR.XZ | ✔ | ✔ | ✔ | ✔ | – |
 | GZ, BZ2, XZ (tek dosya) | ✔ | ✔ | – | – | – |
-| RAR | – | ✔ (harici araçla) | – | – | – |
+| RAR (RAR4, RAR5) | – | ✔ | – | – | ✔ (açarken) |
 
 * Arşiv içinde klasör klasör gezinme; boyut, sıkışık boyut, oran, CRC sütunları
 * Sürükle-bırak: dosyaları pencereye bırakınca arşivlenir, arşivden dışarı sürüklenir
@@ -90,8 +90,10 @@ sürümü konsolsuz derlendiği için komut satırı kullanımı için `pip` kur
 
 ### RAR açma
 
-RAR açmak için sistemde şu araçlardan biri bulunmalı: `unrar`, `unar`, `7z` veya
-`bsdtar` (macOS ve Windows 10+ ile birlikte gelir; şifreli RAR desteklemez).
+Ek bir şey kurmanız gerekmez. ChestZip, RAR açmak için resmi 7-Zip programını
+(`7zz`) içinde taşır; Windows, macOS ve Linux'ta aynı çözücü kullanılır. Şifreli ve
+başlığı şifreli RAR'lar da açılır. Açılan veri yine ChestZip'in güvenlik
+katmanından (zip bombası, Zip Slip koruması) geçer.
 
 ## Hukuki notlar
 
@@ -99,11 +101,15 @@ RAR açmak için sistemde şu araçlardan biri bulunmalı: `unrar`, `unar`, `7z`
 * WinRAR'ın adını, logosunu, ikonlarını, kodunu veya arayüz görsellerini kullanmaz.
   Tüm ikonlar bu projede SVG olarak çizilmiştir.
 * **RAR arşivi oluşturulmaz.** RAR sıkıştırma algoritması tescillidir; unRAR lisansı da
-  kodunun RAR sıkıştırıcı yapmak için kullanılmasını yasaklar. ChestZip unRAR kodunu
-  içermez; RAR açma yalnızca kullanıcının sisteminde kurulu harici bir araçla yapılır.
+  kodunun RAR sıkıştırıcı yapmak için kullanılmasını yasaklar.
+* **RAR açmak serbesttir.** RAR açma, değiştirilmemiş resmi 7-Zip programıyla yapılır;
+  7-Zip'in lisansı RAR açmaya izin verir, yalnızca RAR oluşturmayı yasaklar. Ayrıntılar
+  ve lisans metinleri: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+* "RAR" ve "WinRAR" RARLAB'ın markalarıdır; bu yüzden uygulamanın adında kullanılmaz.
 * ZIP, 7z, tar, gzip, bzip2 ve xz açık biçimlerdir.
 * Bağımlılık lisansları: PySide6/Qt (LGPLv3), py7zr (LGPL-2.1), pyzipper (MIT),
-  rarfile (ISC). LGPL kütüphaneler değiştirilmeden, dinamik olarak kullanılır.
+  rarfile (ISC), py7zz (MIT), 7-Zip (LGPL + unRAR kısıtlaması), cryptography (Apache/BSD).
+  LGPL bileşenler değiştirilmeden kullanılır.
 
 ## Proje yapısı
 

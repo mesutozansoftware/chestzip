@@ -1,0 +1,3 @@
+Bu klasördeki .rar dosyaları rarfile projesinin test dosyalarıdır
+(https://github.com/markokr/rarfile, ISC lisansı). Yalnızca test amaçlıdır.
+Şifreli olanların şifresi: "password"
