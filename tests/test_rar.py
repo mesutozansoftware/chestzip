@@ -18,7 +18,7 @@ def test_bundled_decoder_is_used():
     exe = bundled_7zz()
     assert exe is not None and exe.is_file()
     Archive(DATA / "rar5-solid.rar")  # aracı yapılandırır
-    assert rarfile.CURRENT_SETUP.setup["open_cmd"][0] == "SEVENZIP2_TOOL"
+    assert type(rarfile.CURRENT_SETUP).__name__ == "_SevenZipSetup"
     assert rarfile.SEVENZIP2_TOOL == str(exe)
 
 
@@ -87,3 +87,13 @@ def test_stream_ratio_limit(tmp_path):
     with Archive(DATA / "rar3-solid.rar", limits=Limits(max_ratio=5, ratio_grace=100)) as a:
         with pytest.raises(SafetyError):
             a.extract(tmp_path)
+
+
+@pytest.mark.parametrize("name", ["unicode", "rar5-subdirs", "rar3-subdirs", "rar5-solid"])
+def test_listfile_path_unicode(tmp_path, monkeypatch, name):
+    """Dosya adının 7-Zip'e liste dosyasıyla verildiği yol (Windows Unicode hatası)."""
+    import rarfile
+    monkeypatch.setattr(rarfile, "USE_EXTRACT_HACK", 0)
+    with Archive(DATA / f"{name}.rar") as a:
+        res = a.extract(tmp_path)
+        assert res.files == sum(1 for e in a.entries() if not e.is_dir)

@@ -10,8 +10,12 @@ ChestZip'in güvenlik katmanından geçer.
 
 from __future__ import annotations
 
+import atexit
 import importlib.util
+import os
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 from typing import Optional
 
@@ -53,6 +57,37 @@ def _local(dt):
     return dt
 
 
+_list_dir: Optional[str] = None
+
+
+def _listfile(name: str) -> str:
+    """Dosya adını UTF-8 liste dosyasına yazar.
+
+    Adı komut satırında vermek Windows'ta bazı Unicode karakterleri bozar;
+    7-Zip'e ``-scsUTF-8 -i@liste`` ile vermek her platformda aynı çalışır."""
+    global _list_dir
+    if _list_dir is None:
+        _list_dir = tempfile.mkdtemp(prefix="chestzip-rar-")
+        atexit.register(shutil.rmtree, _list_dir, True)
+    fd, path = tempfile.mkstemp(suffix=".lst", dir=_list_dir)
+    with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+        f.write(name + "\n")
+    return path
+
+
+if rarfile is not None:
+    class _SevenZipSetup(rarfile.ToolSetup):
+        """Gömülü 7zz için komut satırı: dosya adı liste dosyasıyla verilir."""
+
+        def open_cmdline(self, pwd, rarfn, filefn=None):
+            cmd = [rarfile.SEVENZIP2_TOOL, "e", "-so", "-bb0", "-scsUTF-8", "-spd"]
+            self.add_password_arg(cmd, pwd)
+            if filefn:
+                cmd.append("-i@" + _listfile(filefn))
+            cmd += ["--", rarfn]
+            return cmd
+
+
 def _setup_tool() -> None:
     global _tool_ready
     if _tool_ready:
@@ -60,13 +95,11 @@ def _setup_tool() -> None:
     exe = bundled_7zz()
     if exe is not None:
         rarfile.SEVENZIP2_TOOL = str(exe)
-        try:
-            rarfile.tool_setup(unrar=False, unar=False, bsdtar=False, sevenzip=False,
-                               sevenzip2=True, force=True)
+        setup = _SevenZipSetup(rarfile.SEVENZIP2_CONFIG)
+        if setup.check():
+            rarfile.CURRENT_SETUP = setup
             _tool_ready = True
             return
-        except rarfile.RarCannotExec:
-            pass
     rarfile.tool_setup(force=True)  # yedek: sistemdeki araçlar
     _tool_ready = True
 
@@ -94,11 +127,11 @@ class RarBackend(Backend):
             rf = None
         except rarfile.Error as e:
             raise ArchiveError(t("err.corrupt", detail=e)) from e
-        if rf is None or self.password:
+        if self.password:
             try:
-                rf = rf or rarfile.RarFile(str(self.path), pwd=self.password)
-                if self.password:
-                    rf.setpassword(self.password)
+                if rf is None:
+                    rf = rarfile.RarFile(str(self.path), "r")
+                rf.setpassword(self.password)
             except rarfile.Error as e:
                 raise WrongPassword(t("err.wrong_password")) from e
         if not self.password and rf.needs_password() and not rf.infolist():
