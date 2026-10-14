@@ -71,12 +71,42 @@ işlem durur ve yarım kalan dosya silinir (veri önce geçici dosyaya yazılır
 Sınırlar **Ayarlar → Zip bombası ve güvenlik** bölümünden değiştirilebilir. Koruma
 kapatılsa bile yol güvenliği (Zip Slip) her zaman açıktır.
 
-## Kurulum ve çalıştırma
+## Kurulum
 
-Hazır paketler: GitHub'da bir `v*` etiketi gönderildiğinde Actions iş akışı
-Windows (`.zip`), macOS (`.app`) ve Linux (`.tar.gz`) paketlerini otomatik üretir.
+Ek bir program (Python, 7-Zip vb.) kurmanız gerekmez. Hazır paketler
+[Releases](https://github.com/mesutozansoftware/chestzip/releases/latest) sayfasındadır.
 
-Kaynaktan (Python 3.10+):
+**Tek satırla kurulum** (son sürümü indirir, SHA-256 ile doğrular, yönetici yetkisi istemez):
+
+macOS / Linux:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mesutozansoftware/chestzip/main/install.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/mesutozansoftware/chestzip/main/install.ps1 | iex
+```
+
+Ya da paketi elle indirin:
+
+| Sistem | Nasıl kurulur |
+|---|---|
+| **Windows** | `ChestZip-…-setup-windows-x64.exe` kurulum programını çalıştırın (`.chz` dosyaları ilişkilendirilir). Kurulumsuz kullanım için `…-windows-x64.zip`. |
+| **macOS (Homebrew)** | `brew install --cask mesutozansoftware/chestzip/chestzip` |
+| **macOS (elle)** | `ChestZip-…-macos-arm64.zip` dosyasını açıp `ChestZip.app`'i Uygulamalar'a sürükleyin. (Apple Silicon) |
+| **Ubuntu / Debian** | `sudo apt install ./chestzip_…_amd64.deb` |
+| **Linux (Flatpak)** | `flatpak install --user ChestZip-…-linux-x64.flatpak` |
+| **Diğer Linux** | `ChestZip-…-linux-x64.tar.gz` dosyasını açıp `./linux-install.sh` |
+
+**İlk açılış uyarısı:** Uygulama henüz ücretli bir kod imzalama sertifikasıyla
+imzalanmadığı için Windows "bilgisayarınızı korudu" uyarısı gösterebilir
+(*Ek bilgi → Yine de çalıştır*). macOS'ta ise *Sistem Ayarları → Gizlilik ve
+Güvenlik → Yine de Aç* gerekebilir.
+
+### Kaynaktan çalıştırma (geliştiriciler için, Python 3.10+)
 
 ```bash
 python3 -m venv .venv
@@ -107,8 +137,9 @@ chestzip x supheli.zip --max-ratio 100 --max-size 2G
 ### Dosya ilişkilendirme (`.chz` çift tıklayınca açılsın)
 
 * **macOS:** `ChestZip.app` bir kez açıldığında `.chz` türü sisteme tanıtılır.
-* **Windows:** `ChestZip-setup-windows-x64.exe` kurulum programı `.chz`'yi ilişkilendirir.
-* **Linux:** Paket klasöründe `./linux-install.sh` komutunu çalıştırın.
+* **Windows:** Kurulum programı `.chz`'yi ilişkilendirir.
+* **Linux:** `.deb` ve Flatpak paketleri otomatik ilişkilendirir; `.tar.gz` için
+  `./linux-install.sh`.
 
 ### Kendi paketini derleme
 

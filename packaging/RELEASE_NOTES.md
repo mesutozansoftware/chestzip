@@ -2,6 +2,11 @@
 
 Ek bir program kurmanız gerekmez; RAR desteği dahil her şey paketin içindedir.
 
+### Tek satırla kurulum
+
+* macOS / Linux: `curl -fsSL https://raw.githubusercontent.com/mesutozansoftware/chestzip/main/install.sh | sh`
+* Windows (PowerShell): `irm https://raw.githubusercontent.com/mesutozansoftware/chestzip/main/install.ps1 | iex`
+
 ### İndirme
 
 | Sistem | Dosya |
@@ -11,7 +16,8 @@ Ek bir program kurmanız gerekmez; RAR desteği dahil her şey paketin içindedi
 | macOS (Apple Silicon) | `ChestZip-*-macos-arm64.zip` |
 | Ubuntu / Debian | `chestzip_*_amd64.deb` → `sudo apt install ./chestzip_*_amd64.deb` |
 | Diğer Linux | `ChestZip-*-linux-x64.tar.gz` → açıp `./linux-install.sh` |
-| pip | `pip install chestzip` |
+| Linux (Flatpak) | `ChestZip-*-linux-x64.flatpak` → `flatpak install ChestZip-*.flatpak` |
+| macOS (Homebrew) | `brew install --cask mesutozansoftware/chestzip/chestzip` |
 
 Dosyaların SHA-256 özetleri `SHA256SUMS.txt` içindedir.
 

@@ -1,0 +1,34 @@
+name: install-test
+# Yayınlanmış son sürümü tek satırlık kurulum betikleriyle kurup dener.
+on: workflow_dispatch
+
+jobs:
+  unix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: curl ile kur
+        run: curl -fsSL https://raw.githubusercontent.com/mesutozansoftware/chestzip/main/install.sh | sh
+      - name: Dene
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          chestzip --version
+          echo merhaba > a.txt
+          chestzip a t.chz a.txt -q && chestzip t t.chz -q && chestzip l t.chz
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: PowerShell ile kur
+        shell: pwsh
+        run: irm https://raw.githubusercontent.com/mesutozansoftware/chestzip/main/install.ps1 | iex
+      - name: Dene
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:LOCALAPPDATA "Programs\ChestZip\chestzip.exe"
+          if (-not (Test-Path $exe)) { throw "chestzip.exe bulunamadı: $exe" }
+          $assoc = (Get-ItemProperty "HKCU:\Software\Classes\.chz").'(default)'
+          if ($assoc -ne "ChestZip.Archive") { throw ".chz ilişkilendirmesi yok: $assoc" }
+          Write-Host "Kurulum ve .chz ilişkilendirmesi tamam: $exe"
