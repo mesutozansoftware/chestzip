@@ -8,7 +8,6 @@ ardından bu dosya mesutozansoftware/homebrew-chestzip deposuna kopyalanır.
 
 import subprocess
 import sys
-import urllib.request
 from pathlib import Path
 
 REPO = "mesutozansoftware/chestzip"
@@ -17,7 +16,8 @@ HERE = Path(__file__).resolve().parent
 
 def sums(version: str) -> dict[str, str]:
     url = f"https://github.com/{REPO}/releases/download/v{version}/SHA256SUMS.txt"
-    text = urllib.request.urlopen(url, timeout=60).read().decode()
+    text = subprocess.run(["curl", "-fsSL", url], check=True, capture_output=True,
+                          text=True).stdout
     out = {}
     for line in text.splitlines():
         sha, name = line.split(maxsplit=1)
@@ -38,7 +38,7 @@ def homebrew(v: str, s: dict) -> None:
   homepage "https://github.com/{REPO}"
 
   depends_on arch: :arm64
-  depends_on macos: ">= :monterey"
+  depends_on macos: :monterey
 
   app "ChestZip.app"
   binary "#{{appdir}}/ChestZip.app/Contents/MacOS/chestzip"
