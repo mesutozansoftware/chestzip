@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sandik"
+version = "1.0.0"
+description = "Açık kaynaklı, çapraz platform arşiv yöneticisi (zip bombası korumalı)"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "PySide6-Essentials>=6.5",
+    "py7zr>=0.22",
+    "pyzipper>=0.3.6",
+    "rarfile>=4.1",
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: System :: Archiving :: Compression",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+sandik = "sandik.cli:main"
+
+[project.gui-scripts]
+sandik-gui = "sandik.gui.app:main"
+
+[tool.setuptools.packages.find]
+include = ["sandik*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

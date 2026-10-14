@@ -1,0 +1,68 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Linux Qt bağımlılıkları
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libxkbcommon0 libgl1 libfontconfig1 libdbus-1-3
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+
+  package:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Linux Qt bağımlılıkları
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libxkbcommon0 libgl1 libfontconfig1 libdbus-1-3
+      - run: pip install . pyinstaller
+      - run: python packaging/make_icons.py
+      - run: pyinstaller --noconfirm packaging/sandik.spec
+      - name: Arşivle (Windows)
+        if: runner.os == 'Windows'
+        run: Compress-Archive -Path dist/Sandik/* -DestinationPath Sandik-windows-x64.zip
+      - name: Arşivle (macOS)
+        if: runner.os == 'macOS'
+        run: ditto -c -k --keepParent "dist/Sandık.app" Sandik-macos.zip
+      - name: Arşivle (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          cp packaging/sandik.desktop packaging/icons/sandik.png dist/Sandik/
+          tar -C dist -czf Sandik-linux-x64.tar.gz Sandik
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sandik-${{ runner.os }}
+          path: Sandik-*
+      - name: Sürüme ekle
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Sandik-*
