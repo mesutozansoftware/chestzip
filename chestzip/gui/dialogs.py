@@ -61,13 +61,17 @@ class AddDialog(QDialog):
     """Arşiv oluşturma seçenekleri."""
 
     def __init__(self, parent, files: list[Path], default_out: Path, settings: Settings,
-                 fixed_archive: Optional[Path] = None) -> None:
+                 fixed_archive: Optional[Path] = None, title: Optional[str] = None,
+                 subtitle: Optional[str] = None, icon_name: str = "add",
+                 password_label: Optional[str] = None) -> None:
         super().__init__(parent)
-        self.setWindowTitle(t("add.title"))
+        title = title or t("add.title")
+        self.setWindowTitle(title)
         self.setMinimumWidth(520)
         self.files = files
         lay = QVBoxLayout(self)
-        lay.addWidget(_header(t("add.title"), "add", t("add.files", n=len(files))))
+        lay.addWidget(_header(title, icon_name,
+                              subtitle if subtitle is not None else t("add.files", n=len(files))))
 
         form = QFormLayout()
         row = QHBoxLayout()
@@ -103,11 +107,12 @@ class AddDialog(QDialog):
         show.toggled.connect(lambda on: [w.setEchoMode(
             QLineEdit.EchoMode.Normal if on else QLineEdit.EchoMode.Password)
             for w in (self.pw, self.pw2)])
-        form.addRow(t("add.password"), self.pw)
+        form.addRow(password_label or t("add.password"), self.pw)
         form.addRow(t("add.password2"), self.pw2)
         form.addRow("", show)
         self.enc_note = QLabel(t("add.encrypt_note"))
         self.enc_note.setObjectName("muted")
+        self.enc_note.setWordWrap(True)
         form.addRow("", self.enc_note)
         lay.addLayout(form)
         lay.addWidget(_buttons(self))

@@ -162,7 +162,7 @@ class TarBackend(Backend):
                         ctx.skipped += 1
             except (tarfile.TarError, EOFError, lzma.LZMAError, zlib_error()) as e:
                 raise ArchiveError(t("err.corrupt", detail=e)) from e
-        ctx.finish()
+            ctx.finish()  # dosya kapanmadan: ilerleme kaynağı raw.tell()
 
     # ------------------------------------------------------------------
     def _rebuild(self, drop: set[str], sources: list[Source], level: int,
@@ -284,7 +284,7 @@ class StreamBackend(Backend):
                     out.copy_from(open_decompressed(raw, self.comp), CHUNK)
             except (OSError, EOFError, lzma.LZMAError, zlib_error()) as e:
                 raise ArchiveError(t("err.corrupt", detail=e)) from e
-        ctx.finish()
+            ctx.finish()
 
 
 def create_stream(out_path, sources: list[Source], comp: str, level=5, progress=None,

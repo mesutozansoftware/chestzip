@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDialog, QFileDi
                                QToolBar, QToolButton, QTreeView, QVBoxLayout, QWidget)
 
 from .. import APP_NAME
-from ..api import Archive, OperationResult, create_archive
+from ..api import Archive, OperationResult, convert_archive, create_archive
 from ..backends import ARCHIVE_EXTENSIONS, detect_format
 from ..errors import (ArchiveError, Cancelled, PasswordRequired, SafetyError,
                       UnsupportedFormat, WrongPassword)
@@ -269,6 +269,7 @@ class MainWindow(QMainWindow):
         self.a_view = self._act("act.view", "view", self.on_view, "Alt+V")
         self.a_delete = self._act("act.delete", "delete", self.on_delete, ["Delete", "Ctrl+Backspace"])
         self.a_info = self._act("act.info", "info", self.on_info, "Alt+I")
+        self.a_convert = self._act("act.convert", "convert", self.on_convert, "Alt+C")
         self.a_settings = self._act("act.settings", "settings", self.on_settings, "Ctrl+,")
         self.a_up = self._act("act.up", "up", self.go_up, ["Backspace", "Alt+Up"])
         self.a_open = self._act("act.open", "archive", self.on_open_dialog, "Ctrl+O")
@@ -287,7 +288,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.a_quit)
         m = mb.addMenu(t("menu.commands"))
         for a in (self.a_add, self.a_extract, self.a_extract_here, self.a_test, self.a_view,
-                  self.a_delete, self.a_info):
+                  self.a_delete, self.a_convert, self.a_info):
             m.addAction(a)
         m = mb.addMenu(t("menu.options"))
         m.addAction(self.a_settings)
@@ -299,7 +300,8 @@ class MainWindow(QMainWindow):
         tb.setMovable(False)
         tb.setIconSize(QSize(36, 36))
         tb.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        for a in (self.a_add, self.a_extract, self.a_test, self.a_view, self.a_delete):
+        for a in (self.a_add, self.a_extract, self.a_test, self.a_view, self.a_delete,
+                  self.a_convert):
             tb.addAction(a)
         tb.addSeparator()
         tb.addAction(self.a_info)
@@ -553,6 +555,7 @@ class MainWindow(QMainWindow):
         self.a_extract_here.setEnabled(in_arc or bool(arc_sel))
         self.a_test.setEnabled(in_arc or len(arc_sel) == 1)
         self.a_info.setEnabled(in_arc or len(arc_sel) == 1)
+        self.a_convert.setEnabled(in_arc or len(arc_sel) == 1)
         cur = self.current_row()
         self.a_view.setEnabled(cur is not None and not cur.is_dir)
         self.a_add.setEnabled(not in_arc or self.archive.backend.can_add)
@@ -876,6 +879,46 @@ class MainWindow(QMainWindow):
 
         self._with_current_archive(go)
 
+    def on_convert(self) -> None:
+        def go(a: Archive) -> None:
+            if not self.ensure_password(a):
+                return
+            src = a.path
+            stem = src.name
+            for ext in sorted(ARCHIVE_EXTENSIONS, key=len, reverse=True):
+                if stem.lower().endswith(ext):
+                    stem = stem[: -len(ext)]
+                    break
+            # Varsayılan hedef: kaynak CHZ ise ZIP (herkes açabilsin), değilse CHZ.
+            fmt = "zip" if a.format == "chz" else "chz"
+            settings = Settings(**{**self.settings.__dict__, "default_format": fmt})
+            dlg = dialogs.AddDialog(
+                self, [], src.parent / stem, settings, title=t("conv.title"),
+                subtitle=t("conv.source", name=src.name, fmt=a.format_name),
+                icon_name="convert", password_label=t("conv.new_password"))
+            if dlg.exec() != QDialog.DialogCode.Accepted:
+                return
+            v = dlg.values()
+            out: Path = v["out"]
+            if out.exists() and QMessageBox.question(
+                    self, t("dlg.overwrite_title"), t("dlg.overwrite_text", path=out)) != \
+                    QMessageBox.StandardButton.Yes:
+                return
+            password, limits = a.password, self.settings.limits
+
+            def work(progress, cancel, ask):
+                return convert_archive(src, out, v["fmt"], v["level"], password,
+                                       v["password"], limits, progress, cancel)
+
+            def done(res: OperationResult) -> None:
+                self.show_result(t("dlg.done"), t("res.converted", path=res.dest), res.warnings)
+                if self.archive is None and self.fs_dir == out.parent:
+                    self.navigate_fs(self.fs_dir, select=out.name)
+
+            self.run_task(work, t("prog.converting"), "convert", done)
+
+        self._with_current_archive(go)
+
     def on_info(self) -> None:
         self._with_current_archive(
             lambda a: dialogs.InfoDialog(self, a, a.analyze()).exec())
@@ -950,7 +993,7 @@ class MainWindow(QMainWindow):
         if sel:
             menu.addAction(self.a_view)
         menu.addSeparator()
-        for a in (self.a_extract, self.a_extract_here, self.a_test, self.a_add):
+        for a in (self.a_extract, self.a_extract_here, self.a_test, self.a_convert, self.a_add):
             if a.isEnabled():
                 menu.addAction(a)
         menu.addSeparator()

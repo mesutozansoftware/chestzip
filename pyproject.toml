@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chestzip"
-version = "1.0.0"
+version = "1.1.0"
 description = "Açık kaynaklı, çapraz platform arşiv yöneticisi (zip bombası korumalı)"
 readme = "README.md"
 license = "MIT"

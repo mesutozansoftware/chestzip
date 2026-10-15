@@ -34,6 +34,9 @@
     <category>Archiving</category>
   </categories>
   <releases>
+    <release version="1.1.0" date="2026-10-15">
+      <description><p>New: convert archives between formats (e.g. CHZ to ZIP, RAR to CHZ).</p></description>
+    </release>
     <release version="1.0.0" date="2026-10-14">
       <description><p>First release.</p></description>
     </release>

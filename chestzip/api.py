@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -196,3 +197,40 @@ def create_archive(out_path: str | Path, paths: Iterable[str | Path], fmt: Optio
             os.unlink(tmp)
         raise
     return out_path
+
+
+def convert_archive(src: str | Path, out_path: str | Path, fmt: Optional[str] = None,
+                    level: int = 5, password: Optional[str] = None,
+                    new_password: Optional[str] = None, limits: Optional[Limits] = None,
+                    progress: Optional[ProgressFn] = None,
+                    cancel: Optional[CancelToken] = None) -> OperationResult:
+    """Bir arşivi başka bir biçime dönüştürür (ör. .chz -> .zip, .rar -> .chz).
+
+    İçerik önce geçici bir klasöre güvenlik kurallarıyla çıkartılır (zip bombası
+    ve Zip Slip korumaları geçerlidir), sonra yeni biçimde paketlenir. Geçici
+    klasör her durumda silinir; kaynak arşiv değiştirilmez."""
+    src = Path(src).resolve()
+    out_path = Path(out_path).resolve()
+    if src == out_path:
+        raise UnsupportedOperation(t("conv.same_file"))
+    archive = Archive(src, password=password, limits=limits)
+
+    def phase(offset: int):
+        def report(done: int, total: int, name: str) -> None:
+            if progress:
+                pct = (done / total) if total else 0.0
+                progress(int((offset + min(pct, 1.0) * 50) * 10), 1000, name)
+        return report
+
+    tmp = Path(tempfile.mkdtemp(prefix="chestzip-convert-"))
+    try:
+        res = archive.extract(tmp, overwrite="always", progress=phase(0), cancel=cancel)
+        items = sorted(tmp.iterdir())
+        if not items:
+            raise ArchiveError(t("conv.empty"))
+        create_archive(out_path, items, fmt, level, new_password, phase(50), cancel)
+        res.dest = out_path
+        return res
+    finally:
+        archive.close()
+        shutil.rmtree(tmp, ignore_errors=True)

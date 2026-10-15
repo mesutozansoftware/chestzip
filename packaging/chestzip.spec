@@ -37,7 +37,7 @@ if sys.platform == "darwin":
     app = BUNDLE(
         coll, name="ChestZip.app", icon=str(icon), bundle_identifier="org.chestzip.app",
         info_plist={
-            "CFBundleShortVersionString": "1.0.0",
+            "CFBundleShortVersionString": "1.1.0",
             "NSHighResolutionCapable": True,
             "UTExportedTypeDeclarations": [{
                 "UTTypeIdentifier": "org.chestzip.chz",

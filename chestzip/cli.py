@@ -8,6 +8,7 @@
     chestzip a -p sifre gizli.7z belge/  # şifreli 7z
     chestzip t arsiv.tar.gz              # test et
     chestzip d arsiv.zip eski.txt        # arşivden sil
+    chestzip c arsiv.chz arsiv.zip       # biçim dönüştür
 """
 
 from __future__ import annotations
@@ -18,7 +19,7 @@ import sys
 from pathlib import Path
 
 from . import APP_NAME, __version__
-from .api import Archive, create_archive
+from .api import Archive, convert_archive, create_archive
 from .backends import CREATE_FORMATS
 from .errors import ArchiveError, PasswordRequired
 from .i18n import set_language, t
@@ -151,6 +152,20 @@ def cmd_delete(args, limits) -> int:
     return 0
 
 
+def cmd_convert(args, limits) -> int:
+    a = _open(args, limits)  # gerekirse kaynak şifresini sorar
+    a.close()
+    prog = _Progress(t("prog.converting"), args.quiet)
+    res = convert_archive(args.archive, args.output, fmt=args.format, level=args.level,
+                          password=a.password, new_password=args.new_password,
+                          limits=limits, progress=prog)
+    prog.end()
+    print(t("res.converted", path=res.dest))
+    for w in res.warnings:
+        print("!  " + w, file=sys.stderr)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="chestzip", description=f"{APP_NAME} — {t('app.tagline')}")
     p.add_argument("--version", action="version", version=f"{APP_NAME} {__version__}")
@@ -181,6 +196,12 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("files", nargs="+")
     sp.add_argument("-f", "--format", choices=list(CREATE_FORMATS))
     sp.add_argument("-l", "--level", type=int, default=5, choices=range(0, 10))
+    sp = common(sub.add_parser("c", aliases=["convert"],
+                               help="biçim dönüştür (ör. a.chz -> a.zip)"))
+    sp.add_argument("output", help="yeni arşiv (biçim uzantıdan anlaşılır)")
+    sp.add_argument("-f", "--format", choices=list(CREATE_FORMATS))
+    sp.add_argument("-l", "--level", type=int, default=5, choices=range(0, 10))
+    sp.add_argument("--new-password", help="yeni arşivin şifresi (CHZ, ZIP, 7Z)")
     sp = common(sub.add_parser("d", aliases=["delete"], help="arşivden sil"))
     sp.add_argument("members", nargs="+")
     sp = sub.add_parser("gui", help="grafik arayüzü aç")
@@ -190,7 +211,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 COMMANDS = {"l": cmd_list, "list": cmd_list, "x": cmd_extract, "extract": cmd_extract,
             "t": cmd_test, "test": cmd_test, "a": cmd_add, "add": cmd_add,
-            "d": cmd_delete, "delete": cmd_delete}
+            "d": cmd_delete, "delete": cmd_delete, "c": cmd_convert, "convert": cmd_convert}
 
 
 def main(argv=None) -> int:

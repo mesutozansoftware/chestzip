@@ -44,6 +44,8 @@ belgeli** olması: [docs/CHZ_FORMAT.md](docs/CHZ_FORMAT.md).
 * Sürükle-bırak: dosyaları pencereye bırakınca arşivlenir, arşivden dışarı sürüklenir
 * Arşivdeki dosyayı çift tıklayınca görüntüleme
 * Bütünlük testi (CRC), arşiv bilgisi ve güvenlik analizi
+* **Dönüştür:** Arşivi başka biçime çevirir (ör. `.chz` → `.zip`, `.rar` → `.chz`);
+  şifreli arşivleri yeni bir şifreyle de dönüştürebilir
 * Üzerine yazma seçenekleri: sor / üzerine yaz / atla / otomatik yeniden adlandır
 * Türkçe ve İngilizce arayüz, açık ve koyu tema
 * Komut satırı arayüzü (`chestzip l/x/a/t/d`)
@@ -138,6 +140,7 @@ chestzip l yedek.7z -p gizli              # listele (+ güvenlik analizi)
 chestzip x yedek.7z -o hedef/ -p gizli    # çıkart
 chestzip t arsiv.zip                      # test et
 chestzip d arsiv.zip eski/                # arşivden sil
+chestzip c yedek.chz yedek.zip            # biçim dönüştür (herkes açabilsin)
 chestzip x supheli.zip --max-ratio 100 --max-size 2G
 ```
 

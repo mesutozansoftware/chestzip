@@ -2,4 +2,4 @@
 
 APP_NAME = "ChestZip"
 APP_ID = "chestzip"
-__version__ = "1.0.0"
+__version__ = "1.1.0"

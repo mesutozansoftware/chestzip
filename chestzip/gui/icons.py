@@ -47,6 +47,15 @@ ICONS = {
 <rect x="10" y="22" width="3" height="20" fill="#e2b33c"/><rect x="27" y="22" width="3" height="20" fill="#e2b33c"/>
 <circle cx="37" cy="14" r="10" fill="#2f7fd6" stroke="#fff" stroke-width="2"/>
 <path d="M37 20V9M32 13l5-5 5 5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>""",
+    "convert": """
+<rect x="3" y="6" width="17" height="20" rx="3" fill="#a0612b"/>
+<rect x="3" y="6" width="17" height="5" rx="2" fill="#5b3a1e"/>
+<rect x="28" y="22" width="17" height="20" rx="3" fill="#7b4fc9"/>
+<rect x="28" y="22" width="17" height="5" rx="2" fill="#6a3fb5"/>
+<path d="M14 32 C14 40 20 42 26 42" stroke="#2f7fd6" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<path d="M22 37 l5 5 -5 5" stroke="#2f7fd6" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M34 16 C34 8 28 6 22 6" stroke="#2e9b4f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+<path d="M26 1 l-5 5 5 5" stroke="#2e9b4f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>""",
     "test": """
 <path d="M24 4 L40 10 V22 C40 33 33 40 24 44 C15 40 8 33 8 22 V10 Z" fill="#2e9b4f"/>
 <path d="M24 8 L36 12.5 V22 C36 30.5 31 36 24 39.5 Z" fill="#3fb563"/>
