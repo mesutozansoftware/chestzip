@@ -46,9 +46,11 @@ def homebrew(v: str, s: dict) -> None:
   # Uygulama henüz Apple tarafından imzalanmadı (notarize edilmedi). Karantina
   # işareti paketin içindeki yüzlerce kütüphaneye de konduğu için macOS
   # uygulamayı başlatırken takılıyor; işaret yalnızca ChestZip.app'ten kaldırılır.
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{{appdir}}/ChestZip.app"]
+  postflight_steps do
+    run "/usr/bin/xattr",
+        args:           ["-dr", "com.apple.quarantine", "{{{{appdir}}}}/ChestZip.app"],
+        writable_paths: ["ChestZip.app"],
+        writable_base:  :appdir
   end
 
   zap trash: "~/Library/Application Support/ChestZip"
