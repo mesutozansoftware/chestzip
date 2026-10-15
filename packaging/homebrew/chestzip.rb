@@ -1,6 +1,6 @@
 cask "chestzip" do
-  version "1.0.0"
-  sha256 "f4ea047386cd996f1435e33f09c9ae5fdf247f4104ea285465dc17e2e1458048"
+  version "1.1.0"
+  sha256 "5ba72078dd6ae07162b1c463cdc3f0326eb2926c00643b6881cf178b6eb1a35d"
 
   url "https://github.com/mesutozansoftware/chestzip/releases/download/v#{version}/ChestZip-#{version}-macos-arm64.zip"
   name "ChestZip"
